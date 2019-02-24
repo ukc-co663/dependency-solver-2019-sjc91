@@ -5,7 +5,10 @@
  */
 package StateManager;
 
+import depsolver.Constraint;
+import depsolver.RepoManager.Contract;
 import depsolver.RepoManager.Item;
+import depsolver.RepoManager.Repo;
 import java.util.HashMap;
 
 /**
@@ -30,5 +33,19 @@ public class Manager {
             found.AddVersion(version);
         }
         packages.put(name, found);
+    }
+    
+    public boolean isInstalled(Constraint item){
+        Package found = this.packages.get(item.name);
+        if(found==null) return false;
+        return found.hasVersion(item.version);
+    }
+
+    public String install(Constraint curConstraint, Repo curRepo) {
+        return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version))).result;
+    }
+
+    public void uninstall(Constraint curConstraint) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

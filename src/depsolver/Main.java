@@ -44,8 +44,22 @@ public class Main {
             constraintsState.add(new Constraint(p));
         }
         
+        for (Constraint curConstraint : constraintsState) {
+            if(curConstraint.action == Action.install){
+                if(!initialState.isInstalled(curConstraint)){
+                    String output = initialState.install(curConstraint, curRepo);
+                    System.out.println(output);
+                }
+            }else if(curConstraint.action == Action.uninstall){
+                if(initialState.isInstalled(curConstraint)){
+                    initialState.uninstall(curConstraint);
+                }
+            }
+        }
+        
         System.out.println("Done");
     }
+   
 
     static String readFile(String filename) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));

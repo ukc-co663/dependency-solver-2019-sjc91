@@ -25,4 +25,8 @@ public class Package {
             this.versions.add(version);
         }
     }
+    
+    public boolean hasVersion(String version){
+        return this.versions.contains(version);
+    }
 }
