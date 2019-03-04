@@ -13,8 +13,10 @@ public class BuildVersion {
     public int major = 0;
     public int minor = 0;
     public int revision = 0;
+    public String text_version = "";
     
     public BuildVersion(String input){
+        this.text_version = input;
         String[] temp = input.split("\\.");
         if(temp.length==1){
             this.major = Integer.parseInt(temp[0]);
@@ -31,7 +33,7 @@ public class BuildVersion {
     }
     
     public String pretty(){
-        return major + "." + minor + "." + revision;
+        return text_version;
     }
     
     public boolean isEqual(BuildVersion version){

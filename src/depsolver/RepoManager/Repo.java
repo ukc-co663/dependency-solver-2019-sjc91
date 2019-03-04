@@ -42,11 +42,11 @@ public class Repo {
                 Result temp = install(depend);  
                 if(best == null || temp.weight < best.weight) best = temp;
             }
-            resposne.result = resposne.result + best.result;
+            resposne.result.addAll(best.result);
             resposne.weight = resposne.weight + best.weight;
         }
         resposne.weight = resposne.weight + package_version.getSize();
-        resposne.result = resposne.result + "+" + package_installing.getName() + "=" + package_version.getRevision().pretty() + "\n";
+        resposne.result.add("+" + package_installing.getName() + "=" + package_version.getRevision().pretty());
         return resposne;
     }
 }

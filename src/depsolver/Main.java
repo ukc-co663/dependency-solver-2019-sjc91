@@ -44,11 +44,13 @@ public class Main {
             constraintsState.add(new Constraint(p));
         }
         
+        ArrayList commands = new ArrayList<String>();
+        
         for (Constraint curConstraint : constraintsState) {
             if(curConstraint.action == Action.install){
                 if(!initialState.isInstalled(curConstraint)){
-                    String output = initialState.install(curConstraint, curRepo);
-                    System.out.println(output);
+                    ArrayList output = initialState.install(curConstraint, curRepo);
+                    commands.addAll(output);
                 }
             }else if(curConstraint.action == Action.uninstall){
                 if(initialState.isInstalled(curConstraint)){
@@ -56,8 +58,8 @@ public class Main {
                 }
             }
         }
-        
-        System.out.println("Done");
+        String jsonString = JSON.toJSONString(commands);
+        System.out.println(jsonString);
     }
    
 

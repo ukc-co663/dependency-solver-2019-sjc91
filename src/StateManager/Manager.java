@@ -9,6 +9,7 @@ import depsolver.Constraint;
 import depsolver.RepoManager.Contract;
 import depsolver.RepoManager.Item;
 import depsolver.RepoManager.Repo;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -41,7 +42,7 @@ public class Manager {
         return found.hasVersion(item.version);
     }
 
-    public String install(Constraint curConstraint, Repo curRepo) {
+    public ArrayList install(Constraint curConstraint, Repo curRepo) {
         return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version))).result;
     }
 

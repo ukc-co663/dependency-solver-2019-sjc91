@@ -5,11 +5,13 @@
  */
 package depsolver;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Sam
  */
 public class Result {
-    public String result = "";
+    public ArrayList result = new ArrayList<String>();
     public int weight = 0;
 }
