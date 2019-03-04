@@ -6,6 +6,7 @@
 package depsolver.RepoManager;
 
 import depsolver.BuildVersion;
+import depsolver.Conditions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;

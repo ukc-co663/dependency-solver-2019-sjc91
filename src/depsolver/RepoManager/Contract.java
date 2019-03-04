@@ -6,15 +6,7 @@
 package depsolver.RepoManager;
 
 import depsolver.BuildVersion;
-
-enum Conditions{
-    LessThan,
-    LessEqualThan,
-    GreaterThan,
-    GreaterEqualThan,
-    EqualThan,
-    All
-}
+import depsolver.Conditions;
 
 /**
  *
