@@ -12,6 +12,6 @@ import java.util.ArrayList;
  * @author Sam
  */
 public class Result {
-    public ArrayList result = new ArrayList<String>();
+    public ArrayList<String> result = new ArrayList<String>();
     public int weight = 0;
 }

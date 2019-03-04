@@ -44,12 +44,13 @@ public class Main {
             constraintsState.add(new Constraint(p));
         }
         
-        ArrayList commands = new ArrayList<String>();
+        ArrayList<String> commands = new ArrayList<String>();
         
         for (Constraint curConstraint : constraintsState) {
             if(curConstraint.action == Action.install){
                 if(!initialState.isInstalled(curConstraint)){
-                    ArrayList output = initialState.install(curConstraint, curRepo);
+                    ArrayList<String> output;
+                    output = initialState.install(curConstraint, curRepo);
                     commands.addAll(output);
                 }
             }else if(curConstraint.action == Action.uninstall){

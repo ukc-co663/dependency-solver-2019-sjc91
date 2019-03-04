@@ -42,7 +42,7 @@ public class Manager {
         return found.hasVersion(item.version);
     }
 
-    public ArrayList install(Constraint curConstraint, Repo curRepo) {
+    public ArrayList<String> install(Constraint curConstraint, Repo curRepo) {
         return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version))).result;
     }
 
