@@ -4,11 +4,6 @@
  * and open the template in the editor.
  */
 package depsolver;
-
-enum Action{
-    install,
-    uninstall
-}
 /**
  *
  * @author Sam
