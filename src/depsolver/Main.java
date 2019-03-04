@@ -60,7 +60,7 @@ public class Main {
             }
         }
         String jsonString = JSON.toJSONString(commands);
-        System.out.println(jsonString);
+        System.out.print(jsonString);
     }
    
 
