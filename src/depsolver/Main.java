@@ -9,7 +9,7 @@ package depsolver;
  *
  * @author Sam
  */
-import StateManager.Manager;
+import depsolver.StateManager.Manager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import depsolver.RepoManager.Repo;
