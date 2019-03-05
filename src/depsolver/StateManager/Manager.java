@@ -36,14 +36,40 @@ public class Manager {
         packages.put(name, found);
     }
     
+    public void AddPackage(Contract item){
+        String name = "";
+        String version = "";
+        
+        name = item.name;
+        version = item.revision.text_version;
+        
+        Package found = packages.get(name);
+        if(found==null){
+            found = new Package(name, version);
+        }else{
+            found.AddVersion(version);
+        }
+        packages.put(name, found);
+    }
+    
     public boolean isInstalled(Constraint item){
         Package found = this.packages.get(item.name);
         if(found==null) return false;
         return found.hasVersion(item.version);
     }
+    
+    public boolean isInstalled(Contract item){
+        Package found = this.packages.get(item.name);
+        if(found==null) return false;
+        if(item.revision != null){
+            return found.hasVersion(item.revision.text_version);
+        }else{
+            return true;
+        }
+    }
 
     public ArrayList<String> install(Constraint curConstraint, Repo curRepo) {
-        return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version))).result;
+        return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version)), this).result;
     }
 
     public void uninstall(Constraint curConstraint) {

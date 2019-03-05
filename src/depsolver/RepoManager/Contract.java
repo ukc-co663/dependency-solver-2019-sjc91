@@ -47,6 +47,7 @@ public class Contract {
         }else{
             this.name = p;
             this.cond = Conditions.All;
+            this.revision = new BuildVersion();
         }            
     }
 }

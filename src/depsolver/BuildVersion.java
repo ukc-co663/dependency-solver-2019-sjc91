@@ -15,6 +15,10 @@ public class BuildVersion {
     public int revision = 0;
     public String text_version = "";
     
+    public BuildVersion(){
+        
+    }
+
     public BuildVersion(String input){
         this.text_version = input;
         String[] temp = input.split("\\.");

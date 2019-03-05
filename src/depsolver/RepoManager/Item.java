@@ -31,7 +31,7 @@ public class Item {
     }
     
     public Version findVersion(BuildVersion findVersion, Conditions cond){
-        if(findVersion == null) return this.findSmallestVersion();
+        if(findVersion == null || findVersion.text_version == "") return this.findSmallestVersion();
         
         Version temp = null;
         for(Version version : versions){

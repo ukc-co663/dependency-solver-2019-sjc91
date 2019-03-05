@@ -6,6 +6,7 @@
 package depsolver.RepoManager;
 
 import depsolver.Result;
+import depsolver.StateManager.Manager;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,20 +27,26 @@ public class Repo {
         packages.put(p.getName(), found);
     }
     
-    public Result install(Contract item){
+    public Result install(Contract item, Manager curState){
         Item package_installing = packages.get(item.name);
         if(package_installing==null){
             System.out.println("package not found");
         }
         Version package_version = package_installing.findVersion(item.revision, item.cond);
-        
+        if(package_installing==null){
+            System.out.println("package_version not found");
+        }
         //String installList = "";
         Result resposne = new Result();
+        if(curState.isInstalled(item)){
+            return resposne;
+        }
+        curState.AddPackage(item);
         
         for(List<Contract> dependents : package_version.depends){
             Result best = null;
             for(Contract depend : dependents){
-                Result temp = install(depend);  
+                Result temp = install(depend, curState);  
                 if(best == null || temp.weight < best.weight) best = temp;
             }
             resposne.result.addAll(best.result);
