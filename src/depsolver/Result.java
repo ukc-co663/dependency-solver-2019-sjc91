@@ -5,6 +5,7 @@
  */
 package depsolver;
 
+import depsolver.StateManager.Manager;
 import java.util.ArrayList;
 
 /**
@@ -13,5 +14,11 @@ import java.util.ArrayList;
  */
 public class Result {
     public ArrayList<String> result = new ArrayList<String>();
+    public Manager newState;
     public int weight = 0;
+    
+    public Result(Manager curState){
+        this.newState = curState;
+    }
+    
 }

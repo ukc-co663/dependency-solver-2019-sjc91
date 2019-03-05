@@ -7,6 +7,7 @@ package depsolver.RepoManager;
 
 import depsolver.Result;
 import depsolver.StateManager.Manager;
+import depsolver.StateManager.PackageState;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,21 +38,34 @@ public class Repo {
             System.out.println("package_version not found");
         }
         //String installList = "";
-        Result resposne = new Result();
-        if(curState.isInstalled(item)){
-            return resposne;
+        Result resposne = new Result(curState);
+        PackageState state = resposne.newState.isInstalled(item);
+        switch(state)
+        {
+            case installed:
+                return resposne;
+            case installling:
+                return null;
+                
         }
         curState.AddPackage(item);
         
         for(List<Contract> dependents : package_version.depends){
             Result best = null;
             for(Contract depend : dependents){
-                Result temp = install(depend, curState);  
-                if(best == null || temp.weight < best.weight) best = temp;
+                Result temp = install(depend, resposne.newState);  
+                if(best == null || temp.weight < best.weight){
+                    if(temp!=null) best = temp;
+                }
             }
+            if(best==null) return null;
             resposne.result.addAll(best.result);
-            resposne.weight = resposne.weight + best.weight;
+            resposne.weight = resposne.weight + best.weight;           
+            
         }
+        
+        curState.MarkInstalled(item);
+        
         resposne.weight = resposne.weight + package_version.getSize();
         resposne.result.add("+" + package_installing.getName() + "=" + package_version.getRevision().pretty());
         return resposne;

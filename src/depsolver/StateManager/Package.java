@@ -5,7 +5,9 @@
  */
 package depsolver.StateManager;
 
+import java.util.HashMap;
 import java.util.HashSet;
+
 
 /**
  *
@@ -13,20 +15,29 @@ import java.util.HashSet;
  */
 public class Package {
     public String name;
-    public HashSet<String> versions = new HashSet<>();
+    
+    public HashMap<String, PackageState> versions = new HashMap<>();
     
     public Package(String name, String version){
         this.name = name;
-        this.versions.add(version);
+        this.AddVersion(version);
     }
     
     public void AddVersion(String version){
-        if(!this.versions.contains(version)){
-            this.versions.add(version);
+        if(!this.versions.containsKey(version)){
+            this.versions.put(version,PackageState.installling);
         }
     }
     
-    public boolean hasVersion(String version){
-        return this.versions.contains(version);
+    public boolean isInstalled(String version){
+        return (this.versions.get(version) == PackageState.installed);
+    }
+    
+    public void setInstalled(String version){
+        this.versions.put(version, PackageState.installed);        
+    }
+    
+    public PackageState hasVersion(String version){
+        return this.versions.get(version);
     }
 }

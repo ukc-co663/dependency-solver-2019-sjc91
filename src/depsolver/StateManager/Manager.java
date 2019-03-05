@@ -9,6 +9,7 @@ import depsolver.Constraint;
 import depsolver.RepoManager.Contract;
 import depsolver.RepoManager.Item;
 import depsolver.RepoManager.Repo;
+import depsolver.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,6 +37,22 @@ public class Manager {
         packages.put(name, found);
     }
     
+    public void MarkInstalled(Contract item){
+        String name = "";
+        String version = "";
+        
+        name = item.name;
+        version = item.revision.text_version;
+        
+        Package found = packages.get(name);
+        if(found==null){
+            System.out.print("not found to mark installed");
+        }else{
+            found.setInstalled(version);
+        }
+        packages.put(name, found);
+    }
+    
     public void AddPackage(Contract item){
         String name = "";
         String version = "";
@@ -52,24 +69,24 @@ public class Manager {
         packages.put(name, found);
     }
     
-    public boolean isInstalled(Constraint item){
+    public PackageState isInstalled(Constraint item){
         Package found = this.packages.get(item.name);
-        if(found==null) return false;
+        if(found == null) return PackageState.notFound; 
         return found.hasVersion(item.version);
     }
     
-    public boolean isInstalled(Contract item){
+    public PackageState isInstalled(Contract item){
         Package found = this.packages.get(item.name);
-        if(found==null) return false;
+        if(found == null) return PackageState.notFound; 
         if(item.revision != null){
             return found.hasVersion(item.revision.text_version);
         }else{
-            return true;
+            return PackageState.notFound; 
         }
     }
 
-    public ArrayList<String> install(Constraint curConstraint, Repo curRepo) {
-        return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version)), this).result;
+    public Result install(Constraint curConstraint, Repo curRepo) {
+        return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version)), this);
     }
 
     public void uninstall(Constraint curConstraint) {

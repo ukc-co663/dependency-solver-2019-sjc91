@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import depsolver.RepoManager.Repo;
 import depsolver.RepoManager.Package;
+import depsolver.StateManager.PackageState;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -48,13 +49,14 @@ public class Main {
         
         for (Constraint curConstraint : constraintsState) {
             if(curConstraint.action == Action.install){
-                if(!initialState.isInstalled(curConstraint)){
+                if(initialState.isInstalled(curConstraint) == PackageState.notFound){
                     ArrayList<String> output;
-                    output = initialState.install(curConstraint, curRepo);
-                    commands.addAll(output);
+                    Result outcome = initialState.install(curConstraint, curRepo);
+                    commands.addAll(outcome.result);
+                    initialState = outcome.newState;
                 }
             }else if(curConstraint.action == Action.uninstall){
-                if(initialState.isInstalled(curConstraint)){
+                if(initialState.isInstalled(curConstraint) == PackageState.installed){
                     initialState.uninstall(curConstraint);
                 }
             }

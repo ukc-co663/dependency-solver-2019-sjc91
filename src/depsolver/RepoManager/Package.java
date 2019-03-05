@@ -18,6 +18,7 @@ public class Package {
     private Integer size;
     private List<List<String>> depends = new ArrayList<>();
     private List<String> conflicts = new ArrayList<>();
+    
 
     public String getName() { return name; }
     public String getVersion() { return version; }
