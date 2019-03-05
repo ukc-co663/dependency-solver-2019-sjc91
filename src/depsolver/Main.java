@@ -59,7 +59,7 @@ public class Main {
                 }
             }
         }
-        String jsonString = JSON.toJSONString(commands,true);
+        String jsonString = JSON.toJSONString(commands,false);
         System.out.print(jsonString);
     }
    
