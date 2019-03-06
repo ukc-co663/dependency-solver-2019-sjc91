@@ -38,7 +38,7 @@ public class Main {
         }
         
         for (String p : initial) {
-            initialState.AddPackage(p);
+            initialState.AddPackage(p, true);
         }
         
         for (String p : constraints) {

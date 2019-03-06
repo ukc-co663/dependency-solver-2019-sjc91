@@ -18,14 +18,14 @@ public class Package {
     
     public HashMap<String, PackageState> versions = new HashMap<>();
     
-    public Package(String name, String version){
+    public Package(String name, String version, boolean markInstalled){
         this.name = name;
-        this.AddVersion(version);
+        this.AddVersion(version, markInstalled);
     }
     
-    public void AddVersion(String version){
+    public void AddVersion(String version, boolean markInstalled){
         if(!this.versions.containsKey(version)){
-            this.versions.put(version,PackageState.installling);
+            this.versions.put(version,(markInstalled ? PackageState.installed : PackageState.installling));
         }
     }
     
@@ -38,6 +38,8 @@ public class Package {
     }
     
     public PackageState hasVersion(String version){
-        return this.versions.get(version);
+        PackageState response = this.versions.get(version);
+        if(response != null) return response;
+        return PackageState.notFound;
     }
 }

@@ -9,6 +9,8 @@ import depsolver.Result;
 import depsolver.StateManager.Manager;
 import depsolver.StateManager.PackageState;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.List;
 
 /**
@@ -26,6 +28,29 @@ public class Repo {
             found.AddVersion(p.getVersion(), p.getDepends(), p.getConflicts(), p.getSize());
         }
         packages.put(p.getName(), found);
+    }
+    
+    private Result uninstall(Contract item, Manager curState) {
+        Result resposne = new Result(curState);
+        HashMap<String, PackageState> foundVersions = resposne.newState.findVersions(item);
+        Iterator it = foundVersions.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String pair_version = (String) pair.getKey();
+            PackageState pair_state = (PackageState) pair.getValue();
+            switch(pair_state)
+            {
+                case installed:
+                    resposne.weight = resposne.weight + 10e6;
+                    resposne.result.add("-" + item.name + "=" + pair_version);
+                    break;
+                case installling:
+                    return null;
+
+            }
+        }
+        
+        return resposne;
     }
     
     public Result install(Contract item, Manager curState){
@@ -50,6 +75,13 @@ public class Repo {
         }
         curState.AddPackage(item);
         
+        for(Contract conflict : package_version.conflicts){
+            Result temp = uninstall(conflict, resposne.newState);  
+            if(temp==null) return null;
+            resposne.result.addAll(temp.result);
+            resposne.weight = resposne.weight + temp.weight;   
+        }
+        
         for(List<Contract> dependents : package_version.depends){
             Result best = null;
             for(Contract depend : dependents){
@@ -60,8 +92,7 @@ public class Repo {
             }
             if(best==null) return null;
             resposne.result.addAll(best.result);
-            resposne.weight = resposne.weight + best.weight;           
-            
+            resposne.weight = resposne.weight + best.weight;   
         }
         
         curState.MarkInstalled(item);
@@ -70,4 +101,6 @@ public class Repo {
         resposne.result.add("+" + package_installing.getName() + "=" + package_version.getRevision().pretty());
         return resposne;
     }
+
+    
 }
