@@ -73,7 +73,7 @@ public class Repo {
                 return null;
                 
         }
-        curState.AddPackage(item);
+        resposne.newState.AddPackage(item);
         
         for(Contract conflict : package_version.conflicts){
             Result temp = uninstall(conflict, resposne.newState);  
@@ -95,7 +95,7 @@ public class Repo {
             resposne.weight = resposne.weight + best.weight;   
         }
         
-        curState.MarkInstalled(item);
+        resposne.newState.MarkInstalled(item);
         
         resposne.weight = resposne.weight + package_version.getSize();
         resposne.result.add("+" + package_installing.getName() + "=" + package_version.getRevision().pretty());

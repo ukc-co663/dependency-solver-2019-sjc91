@@ -138,7 +138,17 @@ public class Manager {
                 return found.hasVersion(item.revision.text_version);
             }
             if(item.cond == Conditions.All){
-                return PackageState.installed; //fix - possible installed state when should be installing?
+                Iterator it = found.versions.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry)it.next();
+                    String pair_version = (String) pair.getKey();
+                    PackageState pair_state = (PackageState) pair.getValue();
+                    if(pair_state == PackageState.installed){
+                        return PackageState.installed;
+                    }
+                }
+                if(found.versions.isEmpty()) return PackageState.notFound;
+                return PackageState.installling;
             }
             
             Iterator it = found.versions.entrySet().iterator();
