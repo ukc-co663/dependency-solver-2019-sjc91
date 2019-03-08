@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class Main {
@@ -45,7 +47,7 @@ public class Main {
             constraintsState.add(new Constraint(p));
         }
         
-        ArrayList<String> commands = new ArrayList<String>();
+        LinkedHashSet<String> commands = new LinkedHashSet<String>();
         
         for (Constraint curConstraint : constraintsState) {
             if(curConstraint.action == Action.install){
