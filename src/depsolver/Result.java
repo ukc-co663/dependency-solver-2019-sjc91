@@ -7,13 +7,16 @@ package depsolver;
 
 import depsolver.StateManager.Manager;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  *
  * @author Sam
  */
 public class Result {
-    public ArrayList<String> result = new ArrayList<String>();
+    public LinkedHashSet<String> result = new LinkedHashSet<String>();
     public Manager newState = new Manager();
     public double weight = 0;
     
