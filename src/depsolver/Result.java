@@ -14,11 +14,13 @@ import java.util.ArrayList;
  */
 public class Result {
     public ArrayList<String> result = new ArrayList<String>();
-    public Manager newState;
+    public Manager newState = new Manager();
     public double weight = 0;
     
     public Result(Manager curState){
-        this.newState = curState;
+        this.newState = curState.copy();
     }
+    
+    
     
 }

@@ -9,13 +9,10 @@ import depsolver.BuildVersion;
 import depsolver.Conditions;
 import depsolver.Constraint;
 import depsolver.RepoManager.Contract;
-import depsolver.RepoManager.Item;
 import depsolver.RepoManager.Repo;
 import depsolver.Result;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +21,13 @@ import java.util.Map;
  */
 public class Manager {
     public HashMap<String, Package> packages = new HashMap<>();
+    
+    
+    public Manager copy(){
+        Manager response = new Manager();
+        response.packages.putAll(this.packages);
+        return response;
+    }
     
     public void AddPackage(String input, boolean markInstalled){
         String name = "";

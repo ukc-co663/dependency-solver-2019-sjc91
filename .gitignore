@@ -3,6 +3,8 @@
 /classes/
 /lib/nblibraries.properties
 
+/tests/
+
 # Log file
 *.log
 

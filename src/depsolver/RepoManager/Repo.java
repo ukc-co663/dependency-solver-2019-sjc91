@@ -53,16 +53,7 @@ public class Repo {
         return resposne;
     }
     
-    public Result install(Contract item, Manager curState){
-        Item package_installing = packages.get(item.name);
-        if(package_installing==null){
-            System.out.println("package not found");
-        }
-        Version package_version = package_installing.findVersion(item.revision, item.cond);
-        if(package_installing==null){
-            System.out.println("package_version not found");
-        }
-        //String installList = "";
+    public Result installVersion(Contract item, Item package_installing, Version package_version, Manager curState){
         Result resposne = new Result(curState);
         PackageState state = resposne.newState.isInstalled(item);
         switch(state)
@@ -90,7 +81,9 @@ public class Repo {
                     if(temp!=null) best = temp;
                 }
             }
-            if(best==null) return null;
+            if(best==null){
+                return null;
+            }
             resposne.result.addAll(best.result);
             resposne.weight = resposne.weight + best.weight;   
         }
@@ -99,6 +92,32 @@ public class Repo {
         
         resposne.weight = resposne.weight + package_version.getSize();
         resposne.result.add("+" + package_installing.getName() + "=" + package_version.getRevision().pretty());
+        return resposne;
+    }
+    
+    public Result install(Contract item, Manager curState){
+        Result resposne = new Result(curState);
+        
+        Item package_installing = packages.get(item.name);
+        if(package_installing==null){
+            System.out.println("package not found");
+        }
+        
+        List<Version> package_version = package_installing.findVersion(item.revision, item.cond);
+        if(package_version.isEmpty()){
+            System.out.println("package_version not found");
+        }
+        
+        Result best = null;
+        for(Version version : package_version){
+            Result temp = installVersion(item, package_installing, version, resposne.newState);  
+            if(best == null || temp.weight < best.weight){
+                if(temp!=null) best = temp;
+            }
+        }
+        if(best==null) return null;
+        resposne = best;
+        
         return resposne;
     }
 

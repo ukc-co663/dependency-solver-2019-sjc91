@@ -30,26 +30,27 @@ public class Item {
         this.versions.add(new Version(new BuildVersion(version), conflicts, depends, size));
     }
     
-    public Version findVersion(BuildVersion findVersion, Conditions cond){
-        if(findVersion == null || findVersion.text_version == "") return this.findSmallestVersion();
+    public List<Version> findVersion(BuildVersion findVersion, Conditions cond){
         
-        Version temp = null;
+        
+        List<Version> temp = new ArrayList<Version>();
+        if(findVersion == null || findVersion.text_version == "") return this.versions;
         for(Version version : versions){
             switch(cond){
                 case LessThan:
-                    if(version.getRevision().isLessThan(findVersion)) return version;
+                    if(version.getRevision().isLessThan(findVersion)) temp.add(version);
                     break;
                 case LessEqualThan:
-                    if(version.getRevision().isLessEqualThan(findVersion)) return version;
+                    if(version.getRevision().isLessEqualThan(findVersion)) temp.add(version);
                     break;
                 case GreaterThan:
-                    if(version.getRevision().isGreaterThan(findVersion)) return version;
+                    if(version.getRevision().isGreaterThan(findVersion)) temp.add(version);
                     break;
                 case GreaterEqualThan:
-                    if(version.getRevision().isGreaterEqualThan(findVersion)) return version;
+                    if(version.getRevision().isGreaterEqualThan(findVersion)) temp.add(version);
                     break;
                 case EqualThan:
-                    if(version.getRevision().isEqual(findVersion)) return version;
+                    if(version.getRevision().isEqual(findVersion)) temp.add(version);
                     break;
             }
         }
