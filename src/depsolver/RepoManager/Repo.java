@@ -84,8 +84,8 @@ public class Repo {
             if(best==null){
                 return null;
             }
-            resposne.result.addAll(best.result);
-            resposne.weight = resposne.weight + best.weight;   
+            resposne.result = best.result;
+            resposne.weight = best.weight;   
         }
         
         resposne.newState.MarkInstalled(item);
