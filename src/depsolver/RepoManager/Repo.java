@@ -30,6 +30,11 @@ public class Repo {
         packages.put(p.getName(), found);
     }
     
+    public Item findPackage(String packageName){
+        Item found = packages.get(packageName);
+        return found;
+    }
+    
     private Result uninstall(Contract item, Manager curState) {
         Result resposne = new Result(curState);
         HashMap<String, PackageState> foundVersions = resposne.newState.findVersions(item);
@@ -54,21 +59,29 @@ public class Repo {
     }
     
     public Result installVersion(Contract item, Item package_installing, Version package_version, Manager curState){
-        Result resposne = new Result(curState);
-        PackageState state = resposne.newState.isInstalled(item);
-        switch(state)
-        {
-            case installed:
-                return resposne;
-            case installling:
-                return null;
-                
-        }
-        resposne.newState.AddPackage(item);
+        System.out.println(package_installing.getName() + "=" + package_version.getRevision().text_version);
         
+        //create result obt
+        Result resposne = new Result(curState);
+        
+        //check if already installed, or being installed
+        PackageState state = resposne.newState.isInstalled(item);
+        if(state != PackageState.notFound){
+            return resposne; //already being installed, skip it. 
+        }
+        
+        //check packages installing don't conflict with it
+        if(resposne.newState.findConflicts(package_installing, package_version)){
+            return null;
+        }
+        
+        //add the package to the env as installing
+        resposne.newState.AddPackage(package_installing, package_version, false);
+        
+        //check it doesn't conflict with packages already installed, installing
         for(Contract conflict : package_version.conflicts){
-            Result temp = uninstall(conflict, resposne.newState);  
-            if(temp==null) return null;
+            Result temp = uninstall(conflict, resposne.newState); //try and uninstall the conflict
+            if(temp==null) return null; //theres a conflict with an already installing package, cannot install this package
             resposne.result.addAll(temp.result);
             resposne.weight = resposne.weight + temp.weight;   
         }
@@ -76,18 +89,20 @@ public class Repo {
         for(List<Contract> dependents : package_version.depends){
             Result best = null;
             for(Contract depend : dependents){
-                Result temp = install(depend, resposne.newState);  
-                if(best == null || temp.weight < best.weight){
-                    if(temp!=null) best = temp;
+                Result temp = install(depend, resposne.newState.copy());  
+                if(temp==null){ //cant install dependency
+                    break;
+                }else if(best == null || temp.weight < best.weight){
+                    best = temp;
                 }
             }
             if(best==null){
                 return null;
             }
-            resposne.result = best.result;
-            resposne.weight = best.weight;   
+            resposne.result.addAll(best.result);
+            resposne.weight = resposne.weight + best.weight;     
         }
-        
+                
         resposne.newState.MarkInstalled(item);
         
         resposne.weight = resposne.weight + package_version.getSize();

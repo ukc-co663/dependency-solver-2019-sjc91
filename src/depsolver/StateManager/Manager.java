@@ -9,10 +9,14 @@ import depsolver.BuildVersion;
 import depsolver.Conditions;
 import depsolver.Constraint;
 import depsolver.RepoManager.Contract;
+import depsolver.RepoManager.Item;
 import depsolver.RepoManager.Repo;
+import depsolver.RepoManager.Version;
 import depsolver.Result;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,31 +25,80 @@ import java.util.Map;
  */
 public class Manager {
     public HashMap<String, Package> packages = new HashMap<>();
-    
+    public HashMap<String, ArrayList<Contract>> conflicters = new HashMap<>();
     
     public Manager copy(){
         Manager response = new Manager();
         response.packages.putAll(this.packages);
+        response.conflicters.putAll(this.conflicters);
         return response;
     }
-    
-    public void AddPackage(String input, boolean markInstalled){
-        String name = "";
-        String version = "";
         
-        String[] temp = input.split("=");
-        name = temp[0];
-        version = temp[1];
+    public boolean findConflicts(Item package_installing, Version package_version){
         
-        Package found = packages.get(name);
-        if(found==null){
-            found = new Package(name, version, markInstalled);
-        }else{
-            found.AddVersion(version, markInstalled);
+        
+        ArrayList<Contract> contracts = conflicters.get(package_installing.getName());
+        if(contracts==null) return false;
+        
+        for(Contract contract : contracts){
+            switch(contract.cond){
+                case LessThan:
+                    if(package_version.getRevision().isLessThan(contract.revision)){
+                        return true;
+                    }
+                    break;
+                case LessEqualThan:
+                    if(package_version.getRevision().isLessEqualThan(contract.revision)){
+                        return true;
+                    }
+                    break;
+                case GreaterThan:
+                    if(package_version.getRevision().isGreaterThan(contract.revision)){
+                        return true;
+                    }
+                    break;
+                case GreaterEqualThan:
+                    if(package_version.getRevision().isGreaterEqualThan(contract.revision)){
+                        return true;
+                    }
+                    break;
+                case EqualThan:
+                    if(package_version.getRevision().isEqual(contract.revision)){
+                        return true;
+                    }
+                    break;
+                case All:
+                    return true;
+                
+            }
         }
-        packages.put(name, found);
+        
+        return false;
     }
     
+    public void AddPackage(Item package_installing, Version package_version, boolean markInstalled) {
+        Package found = packages.get(package_installing.getName());
+        if(found==null){
+            found = new Package(package_installing.getName(), package_version.getRevision().text_version, markInstalled);
+        }else{
+            found.AddVersion(package_version.getRevision().text_version, markInstalled);
+        }
+        
+        for(Contract curContract : package_version.conflicts){
+            ArrayList<Contract> foundConflicter = conflicters.get(curContract.name);
+            if(foundConflicter!=null){
+                foundConflicter.add(curContract);
+                conflicters.put(curContract.name,foundConflicter);
+            }else{
+                ArrayList<Contract> tmp = new ArrayList<Contract>();
+                tmp.add(curContract);
+                conflicters.put(curContract.name,tmp);
+            }
+        }
+        
+        packages.put(package_installing.getName(), found);
+    }
+        
     public void MarkInstalled(Contract item){
         String name = "";
         String version = "";
@@ -58,22 +111,6 @@ public class Manager {
             System.out.print("not found to mark installed");
         }else{
             found.setInstalled(version);
-        }
-        packages.put(name, found);
-    }
-    
-    public void AddPackage(Contract item){
-        String name = "";
-        String version = "";
-        
-        name = item.name;
-        version = item.revision.text_version;
-        
-        Package found = packages.get(name);
-        if(found==null){
-            found = new Package(name, version, false);
-        }else{
-            found.AddVersion(version, false);
         }
         packages.put(name, found);
     }
@@ -197,4 +234,5 @@ public class Manager {
     public void uninstall(Constraint curConstraint) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }
