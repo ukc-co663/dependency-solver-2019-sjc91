@@ -59,7 +59,7 @@ public class Repo {
     }
     
     public Result installVersion(Contract item, Item package_installing, Version package_version, Manager curState){
-        System.out.println(package_installing.getName() + "=" + package_version.getRevision().text_version);
+        //System.out.println(package_installing.getName() + "=" + package_version.getRevision().text_version);
         
         //create result obt
         Result resposne = new Result(curState);
@@ -115,12 +115,12 @@ public class Repo {
         
         Item package_installing = packages.get(item.name);
         if(package_installing==null){
-            System.out.println("package not found");
+            //System.out.println("package not found");
         }
         
         List<Version> package_version = package_installing.findVersion(item.revision, item.cond);
         if(package_version.isEmpty()){
-            System.out.println("package_version not found");
+            //System.out.println("package_version not found");
         }
         
         Result best = null;
