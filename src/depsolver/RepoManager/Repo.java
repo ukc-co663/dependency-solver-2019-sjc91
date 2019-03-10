@@ -35,7 +35,7 @@ public class Repo {
         return found;
     }
     
-    private Result uninstall(Contract item, Manager curState) {
+    public Result uninstall(Contract item, Manager curState) {
         Result resposne = new Result(curState);
         HashMap<String, PackageState> foundVersions = resposne.newState.findVersions(item);
         Iterator it = foundVersions.entrySet().iterator();

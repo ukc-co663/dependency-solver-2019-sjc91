@@ -63,7 +63,9 @@ public class Main {
                 }
             }else if(curConstraint.action == Action.uninstall){
                 if(initialState.isInstalled(curConstraint) == PackageState.installed){
-                    initialState.uninstall(curConstraint);
+                    Result outcome = initialState.uninstall(curConstraint, curRepo);
+                    commands.addAll(outcome.result);
+                    initialState = outcome.newState;
                 }
             }
         }

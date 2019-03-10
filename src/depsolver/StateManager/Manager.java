@@ -231,8 +231,8 @@ public class Manager {
         return curRepo.install(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version)), this);
     }
 
-    public void uninstall(Constraint curConstraint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Result uninstall(Constraint curConstraint, Repo curRepo) {
+        return curRepo.uninstall(new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version)), this);
     }
 
 }
