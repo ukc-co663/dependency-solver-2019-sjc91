@@ -66,8 +66,11 @@ public class Repo {
         
         //check if already installed, or being installed
         PackageState state = resposne.newState.isInstalled(item);
-        if(state != PackageState.notFound){
-            return resposne; //already being installed, skip it. 
+        switch(state){
+            case installed:
+                return resposne;
+            case installling:
+                return null;
         }
         
         //check packages installing don't conflict with it
@@ -90,8 +93,8 @@ public class Repo {
             Result best = null;
             for(Contract depend : dependents){
                 Result temp = install(depend, resposne.newState.copy());  
-                if(temp==null){ //cant install dependency
-                    break;
+                if(temp==null){ //cant install dependency. move to next done. dont break!
+                    //break;
                 }else if(best == null || temp.weight < best.weight){
                     best = temp;
                 }
