@@ -76,12 +76,12 @@ public class Manager {
         return false;
     }
     
-    public void AddPackage(Item package_installing, Version package_version, boolean markInstalled) {
+    public void AddPackage(Item package_installing, Version package_version, PackageState initState) {
         Package found = packages.get(package_installing.getName());
         if(found==null){
-            found = new Package(package_installing.getName(), package_version.getRevision().text_version, markInstalled);
+            found = new Package(package_installing.getName(), package_version.getRevision().text_version, initState);
         }else{
-            found.AddVersion(package_version.getRevision().text_version, markInstalled);
+            found.AddVersion(package_version.getRevision().text_version, initState);
         }
         
         for(Contract curContract : package_version.conflicts){
@@ -182,7 +182,7 @@ public class Manager {
                 Iterator it = found.versions.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry)it.next();
-                    String pair_version = (String) pair.getKey();
+                    //String pair_version = (String) pair.getKey();
                     PackageState pair_state = (PackageState) pair.getValue();
                     if(pair_state == PackageState.installed){
                         return PackageState.installed;
@@ -233,6 +233,19 @@ public class Manager {
 
     public void uninstall(Constraint curConstraint) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Manager install_pending(Constraint curConstraint, Repo curRepo) {
+        Contract contract = new Contract(curConstraint.name+(curConstraint.version==null ? "" : "=" + curConstraint.version));
+        
+
+        Item package_installing = curRepo.findPackage(contract.name);
+        Version package_version = package_installing.findVersion(contract.revision, contract.cond).get(0);
+
+        
+        this.AddPackage(package_installing, package_version, PackageState.install_pending);
+        
+        return this;
     }
 
 }

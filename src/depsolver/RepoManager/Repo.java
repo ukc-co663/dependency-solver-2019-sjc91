@@ -76,22 +76,23 @@ public class Repo {
         }
         
         //add the package to the env as installing
-        resposne.newState.AddPackage(package_installing, package_version, false);
+        resposne.newState.AddPackage(package_installing, package_version, PackageState.installling);
         
         //check it doesn't conflict with packages already installed, installing
         for(Contract conflict : package_version.conflicts){
             Result temp = uninstall(conflict, resposne.newState); //try and uninstall the conflict
             if(temp==null) return null; //theres a conflict with an already installing package, cannot install this package
             resposne.result.addAll(temp.result);
+            resposne.newState = temp.newState.copy();
             resposne.weight = resposne.weight + temp.weight;   
         }
         
         for(List<Contract> dependents : package_version.depends){
             Result best = null;
             for(Contract depend : dependents){
-                Result temp = install(depend, resposne.newState.copy());  
+                Result temp = install(depend, resposne.newState);  
                 if(temp==null){ //cant install dependency
-                    break;
+                    //break;
                 }else if(best == null || temp.weight < best.weight){
                     best = temp;
                 }
@@ -100,10 +101,11 @@ public class Repo {
                 return null;
             }
             resposne.result.addAll(best.result);
+            resposne.newState = best.newState.copy();
             resposne.weight = resposne.weight + best.weight;     
         }
                 
-        resposne.newState.MarkInstalled(item);
+        //resposne.newState.MarkInstalled(item);
         
         resposne.weight = resposne.weight + package_version.getSize();
         resposne.result.add("+" + package_installing.getName() + "=" + package_version.getRevision().pretty());

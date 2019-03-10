@@ -45,7 +45,7 @@ public class Main {
             String[] temp = p.split("=");
             Item foundPackage = curRepo.findPackage(temp[0]);
             Version foundVersion = foundPackage.findVersion(new BuildVersion(temp[1]), Conditions.EqualThan).get(0);
-            initialState.AddPackage(foundPackage, foundVersion, true);
+            initialState.AddPackage(foundPackage, foundVersion, PackageState.installed);
         }
         
         for (String p : constraints) {
@@ -53,10 +53,17 @@ public class Main {
         }
         
         LinkedHashSet<String> commands = new LinkedHashSet<String>();
-        
         for (Constraint curConstraint : constraintsState) {
             if(curConstraint.action == Action.install){
                 if(initialState.isInstalled(curConstraint) == PackageState.notFound){
+                    initialState = initialState.install_pending(curConstraint, curRepo);
+                }
+            }
+        }
+        
+        for (Constraint curConstraint : constraintsState) {
+            if(curConstraint.action == Action.install){
+                if(initialState.isInstalled(curConstraint) != PackageState.installed){
                     Result outcome = initialState.install(curConstraint, curRepo);
                     commands.addAll(outcome.result);
                     initialState = outcome.newState;

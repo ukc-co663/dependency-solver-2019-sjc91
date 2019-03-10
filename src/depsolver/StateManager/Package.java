@@ -18,14 +18,14 @@ public class Package {
     
     public HashMap<String, PackageState> versions = new HashMap<>();
     
-    public Package(String name, String version, boolean markInstalled){
+    public Package(String name, String version, PackageState iniState){
         this.name = name;
-        this.AddVersion(version, markInstalled);
+        this.AddVersion(version, iniState);
     }
     
-    public void AddVersion(String version, boolean markInstalled){
+    public void AddVersion(String version, PackageState iniState){
         if(!this.versions.containsKey(version)){
-            this.versions.put(version,(markInstalled ? PackageState.installed : PackageState.installling));
+            this.versions.put(version,iniState);
         }
     }
     

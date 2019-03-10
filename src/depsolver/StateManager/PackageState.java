@@ -12,5 +12,6 @@ package depsolver.StateManager;
 public enum PackageState{
     installed,
     installling,
+    install_pending,
     notFound
 }
