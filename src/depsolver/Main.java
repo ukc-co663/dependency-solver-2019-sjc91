@@ -12,8 +12,10 @@ package depsolver;
 import depsolver.StateManager.Manager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import depsolver.RepoManager.Item;
 import depsolver.RepoManager.Repo;
 import depsolver.RepoManager.Package;
+import depsolver.RepoManager.Version;
 import depsolver.StateManager.PackageState;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -40,7 +42,10 @@ public class Main {
         }
         
         for (String p : initial) {
-            initialState.AddPackage(p, true);
+            String[] temp = p.split("=");
+            Item foundPackage = curRepo.findPackage(temp[0]);
+            Version foundVersion = foundPackage.findVersion(new BuildVersion(temp[1]), Conditions.EqualThan).get(0);
+            initialState.AddPackage(foundPackage, foundVersion, true);
         }
         
         for (String p : constraints) {
@@ -52,14 +57,15 @@ public class Main {
         for (Constraint curConstraint : constraintsState) {
             if(curConstraint.action == Action.install){
                 if(initialState.isInstalled(curConstraint) == PackageState.notFound){
-                    ArrayList<String> output;
                     Result outcome = initialState.install(curConstraint, curRepo);
                     commands.addAll(outcome.result);
                     initialState = outcome.newState;
                 }
             }else if(curConstraint.action == Action.uninstall){
                 if(initialState.isInstalled(curConstraint) == PackageState.installed){
-                    initialState.uninstall(curConstraint);
+                    Result outcome = initialState.uninstall(curConstraint, curRepo);
+                    commands.addAll(outcome.result);
+                    initialState = outcome.newState;
                 }
             }
         }
